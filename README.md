@@ -1,6 +1,7 @@
-        ##### Sistema de Gerenciamento de Pedidos para Restaurantes #####
+# Sistema de Gerenciamento de Pedidos para Restaurantes #
 
-	### Objetivos e Principais Features ###
+### Objetivos e Principais Features ###
+
 Este projeto visa desenvolver um sistema de gerenciamento de pedidos para restaurantes, permitindo a digitalização do processo de atendimento. Os principais objetivos incluem:
 
 . Criar uma aplicação funcional para administração de pedidos.
@@ -11,13 +12,13 @@ Este projeto visa desenvolver um sistema de gerenciamento de pedidos para restau
 . Simular um sprint ágil utilizando uma abordagem baseada em Scrum.
 . Trabalhar em equipe para desenvolver um sistema de pequeno porte.
 
-	### Membros da Equipe ###
+### Membros da Equipe ###
 Carolina Moya Pilla – Frontend (2022043299)
 Mateus Gonçalves Moreira – Backend (2022036510)
 Gustavo Dias Apolinário – Backend (2022035911)
 Letícia Scofield Lenzoni - Full-Stack (2022035547)
 
-	### Pilha de Tecnologias ###
+### Pilha de Tecnologias ###
 Framework: Electron.js → Permite criar aplicativos desktop usando HTML, CSS e JavaScript.
 Interface: Vue.js ou React.js → Frameworks leves para criar a interface do usuário.
 Versionamento: Git (Github)
