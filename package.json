@@ -1,0 +1,20 @@
+{
+  "name": "engenharia-de-software",
+  "version": "1.0.0",
+  "description": "Este projeto visa desenvolver um sistema de gerenciamento de pedidos para restaurantes, permitindo a digitalização do processo de atendimento. Os principais objetivos incluem:",
+  "main": "index.js",
+  "scripts": {
+    "dev": "npm run serve",
+    "start": "electron .",
+    "serve": "vue-cli-service serve"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@vue/cli-service": "^5.0.8",
+    "electron": "^35.1.5",
+    "vue": "^3.5.13",
+    "vue-cli-service": "^5.0.0"
+  }
+}
