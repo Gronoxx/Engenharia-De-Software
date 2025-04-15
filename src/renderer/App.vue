@@ -10,7 +10,7 @@
         </ul>
       </nav>
     </div>
-    
+
     <div class="content-container">
       <router-view />
     </div>
@@ -65,6 +65,4 @@ export default {
   margin: 0 2rem 2rem 2rem;
   border-radius: 12px;
 }
-
-
 </style>
