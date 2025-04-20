@@ -2,7 +2,7 @@
   "name": "engenharia-de-software",
   "version": "1.0.0",
   "description": "Este projeto visa desenvolver um sistema de gerenciamento de pedidos para restaurantes, permitindo a digitalização do processo de atendimento. Os principais objetivos incluem:",
-  "main": "index.js",
+  "main": "src/main/main.js",
   "scripts": {
     "dev": "npm run serve",
     "start": "electron .",
