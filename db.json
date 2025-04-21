@@ -1,0 +1,379 @@
+{
+  "mesas": [
+    {
+      "id": 1,
+      "numero": "A1",
+      "status": "livre",
+      "capacidade": 4,
+      "pedidosAtivos": [],
+      "valorTotalGasto": 0
+    }
+  ],
+  "pedidos": [
+    {
+      "id": "8a37",
+      "status": "em_preparo",
+      "itens": [
+        {
+          "produtoId": 2,
+          "quantidade": 2,
+          "observacoes": ""
+        }
+      ],
+      "mesaId": 1,
+      "garcomId": 1,
+      "dataAbertura": "2025-04-21T20:23:30.692Z"
+    }
+  ],
+  "produtos": [
+    {
+      "id": 1,
+      "nome": "Cerveja Artesanal",
+      "foto": "/assets/Bebidas/Cerveja Artesanal.avif",
+      "preco": 18.9,
+      "categoria": "bebidas",
+      "tempoPreparo": 5,
+      "descricao": "Cerveja artesanal premium",
+      "ingredientes": [
+        {
+          "ingredienteId": 1,
+          "quantidade": 0.3
+        }
+      ],
+      "ativo": true
+    },
+    {
+      "id": 2,
+      "nome": "Classic Burger",
+      "foto": "/assets/Burgers/Classic Burger.jpeg",
+      "preco": 28.9,
+      "categoria": "lanches",
+      "tempoPreparo": 15,
+      "descricao": "Pão brioche, hambúrguer 180g, queijo cheddar, alface, tomate e maionese da casa",
+      "ingredientes": [
+        {
+          "ingredienteId": 2,
+          "quantidade": 1
+        },
+        {
+          "ingredienteId": 3,
+          "quantidade": 0.2
+        },
+        {
+          "ingredienteId": 4,
+          "quantidade": 0.1
+        },
+        {
+          "ingredienteId": 5,
+          "quantidade": 0.1
+        }
+      ],
+      "ativo": true
+    },
+    {
+      "id": 3,
+      "nome": "Bacon Supreme",
+      "foto": "/assets/Burgers/Bacon Supreme.avif",
+      "preco": 32.5,
+      "categoria": "lanches",
+      "tempoPreparo": 15,
+      "descricao": "Hambúrguer suculento com bacon crocante, queijo prato, cebola caramelizada e molho especial",
+      "ingredientes": [
+        {
+          "ingredienteId": 2,
+          "quantidade": 1
+        },
+        {
+          "ingredienteId": 6,
+          "quantidade": 0.15
+        },
+        {
+          "ingredienteId": 7,
+          "quantidade": 0.1
+        }
+      ],
+      "ativo": true
+    },
+    {
+      "id": 4,
+      "nome": "Veggie Delight",
+      "foto": "/assets/Burgers/Veggie Delight.avif",
+      "preco": 26,
+      "categoria": "lanches",
+      "tempoPreparo": 15,
+      "descricao": "Hambúrguer de grão de bico, queijo vegano, rúcula, tomate e maionese de ervas",
+      "ingredientes": [
+        {
+          "ingredienteId": 8,
+          "quantidade": 1
+        },
+        {
+          "ingredienteId": 9,
+          "quantidade": 0.1
+        },
+        {
+          "ingredienteId": 4,
+          "quantidade": 0.1
+        }
+      ],
+      "ativo": true
+    },
+    {
+      "id": 5,
+      "nome": "Margherita",
+      "foto": "/assets/Pizzas/Margherita.avif",
+      "preco": 45,
+      "categoria": "pizzas",
+      "tempoPreparo": 25,
+      "descricao": "Massa fina com molho artesanal, mussarela, tomate e manjericão fresco",
+      "ingredientes": [
+        {
+          "ingredienteId": 10,
+          "quantidade": 0.3
+        },
+        {
+          "ingredienteId": 11,
+          "quantidade": 0.2
+        },
+        {
+          "ingredienteId": 12,
+          "quantidade": 0.05
+        }
+      ],
+      "ativo": true
+    },
+    {
+      "id": 6,
+      "nome": "Pepperoni",
+      "foto": "/assets/Pizzas/Pepperoni.avif",
+      "preco": 52.9,
+      "categoria": "pizzas",
+      "tempoPreparo": 25,
+      "descricao": "Cobertura generosa de pepperoni com mussarela gratinada e toque de orégano",
+      "ingredientes": [
+        {
+          "ingredienteId": 10,
+          "quantidade": 0.3
+        },
+        {
+          "ingredienteId": 13,
+          "quantidade": 0.25
+        },
+        {
+          "ingredienteId": 14,
+          "quantidade": 0.02
+        }
+      ],
+      "ativo": true
+    },
+    {
+      "id": 7,
+      "nome": "Quatro Queijos",
+      "foto": "/assets/Pizzas/Quatro Queijos.avif",
+      "preco": 54,
+      "categoria": "pizzas",
+      "tempoPreparo": 25,
+      "descricao": "Mussarela, gorgonzola, catupiry e parmesão sobre molho branco cremoso",
+      "ingredientes": [
+        {
+          "ingredienteId": 11,
+          "quantidade": 0.2
+        },
+        {
+          "ingredienteId": 15,
+          "quantidade": 0.1
+        },
+        {
+          "ingredienteId": 16,
+          "quantidade": 0.1
+        },
+        {
+          "ingredienteId": 17,
+          "quantidade": 0.05
+        }
+      ],
+      "ativo": true
+    },
+    {
+      "id": 8,
+      "nome": "Frango com Catupiry",
+      "foto": "/assets/Pizzas/Frango Catupiry.avif",
+      "preco": 49.5,
+      "categoria": "pizzas",
+      "tempoPreparo": 25,
+      "descricao": "Frango desfiado, catupiry, milho e orégano, tudo sobre uma massa fina crocante",
+      "ingredientes": [
+        {
+          "ingredienteId": 10,
+          "quantidade": 0.3
+        },
+        {
+          "ingredienteId": 18,
+          "quantidade": 0.2
+        },
+        {
+          "ingredienteId": 16,
+          "quantidade": 0.15
+        },
+        {
+          "ingredienteId": 19,
+          "quantidade": 0.1
+        },
+        {
+          "ingredienteId": 14,
+          "quantidade": 0.02
+        }
+      ],
+      "ativo": true
+    }
+  ],
+  "ingredientes": [
+    {
+      "id": 1,
+      "nome": "Malte",
+      "quantidadeEstoque": 10,
+      "unidadeMedida": "kg",
+      "custoUnitario": 5
+    },
+    {
+      "id": 2,
+      "nome": "Hambúrguer de carne",
+      "quantidadeEstoque": 15,
+      "unidadeMedida": "un",
+      "custoUnitario": 4.5
+    },
+    {
+      "id": 3,
+      "nome": "Queijo cheddar",
+      "quantidadeEstoque": 8,
+      "unidadeMedida": "kg",
+      "custoUnitario": 38
+    },
+    {
+      "id": 4,
+      "nome": "Tomate",
+      "quantidadeEstoque": 5,
+      "unidadeMedida": "kg",
+      "custoUnitario": 6.5
+    },
+    {
+      "id": 5,
+      "nome": "Alface",
+      "quantidadeEstoque": 3,
+      "unidadeMedida": "un",
+      "custoUnitario": 2
+    },
+    {
+      "id": 6,
+      "nome": "Bacon",
+      "quantidadeEstoque": 6,
+      "unidadeMedida": "kg",
+      "custoUnitario": 42
+    },
+    {
+      "id": 7,
+      "nome": "Cebola caramelizada",
+      "quantidadeEstoque": 2,
+      "unidadeMedida": "kg",
+      "custoUnitario": 8
+    },
+    {
+      "id": 8,
+      "nome": "Hambúrguer de grão de bico",
+      "quantidadeEstoque": 10,
+      "unidadeMedida": "un",
+      "custoUnitario": 3.8
+    },
+    {
+      "id": 9,
+      "nome": "Queijo vegano",
+      "quantidadeEstoque": 5,
+      "unidadeMedida": "kg",
+      "custoUnitario": 45
+    },
+    {
+      "id": 10,
+      "nome": "Massa de pizza",
+      "quantidadeEstoque": 20,
+      "unidadeMedida": "un",
+      "custoUnitario": 3
+    },
+    {
+      "id": 11,
+      "nome": "Mussarela",
+      "quantidadeEstoque": 12,
+      "unidadeMedida": "kg",
+      "custoUnitario": 32
+    },
+    {
+      "id": 12,
+      "nome": "Manjericão",
+      "quantidadeEstoque": 1,
+      "unidadeMedida": "kg",
+      "custoUnitario": 15
+    },
+    {
+      "id": 13,
+      "nome": "Pepperoni",
+      "quantidadeEstoque": 4,
+      "unidadeMedida": "kg",
+      "custoUnitario": 48
+    },
+    {
+      "id": 14,
+      "nome": "Orégano",
+      "quantidadeEstoque": 0.5,
+      "unidadeMedida": "kg",
+      "custoUnitario": 25
+    },
+    {
+      "id": 15,
+      "nome": "Gorgonzola",
+      "quantidadeEstoque": 3,
+      "unidadeMedida": "kg",
+      "custoUnitario": 65
+    },
+    {
+      "id": 16,
+      "nome": "Catupiry",
+      "quantidadeEstoque": 5,
+      "unidadeMedida": "kg",
+      "custoUnitario": 40
+    },
+    {
+      "id": 17,
+      "nome": "Parmesão",
+      "quantidadeEstoque": 4,
+      "unidadeMedida": "kg",
+      "custoUnitario": 55
+    },
+    {
+      "id": 18,
+      "nome": "Frango desfiado",
+      "quantidadeEstoque": 8,
+      "unidadeMedida": "kg",
+      "custoUnitario": 18
+    },
+    {
+      "id": 19,
+      "nome": "Milho",
+      "quantidadeEstoque": 3,
+      "unidadeMedida": "kg",
+      "custoUnitario": 7
+    }
+  ],
+  "garcons": [
+    {
+      "id": 1,
+      "nome": "Fernanda Costa",
+      "ativo": true,
+      "email": "fernanda@restaurante.com"
+    },
+    {
+      "id": 2,
+      "nome": "Carlos Silva",
+      "ativo": true,
+      "email": "carlos@restaurante.com"
+    }
+  ]
+}

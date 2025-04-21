@@ -1,22 +1,83 @@
 <template>
   <div class="menu-container">
-
     <div class="grid">
-      <div class="card" v-for="(item, index) in produtos" :key="index" @click="abrirModal(item)">
-        <img :src="item.foto" :alt="item.titulo" />
+      <div 
+        class="card" 
+        v-for="produto in produtos" 
+        :key="produto.id" 
+        @click="abrirModal(produto)"
+      >
+        <img :src="`http://localhost:3001${produto.foto}`" :alt="produto.nome" />
         <div class="card-content">
-          <h3>{{ item.titulo }}</h3>
-          <p>{{ item.descricao.slice(0, 50) }}...</p>
-          <p class="price">R$ {{ item.preco.toFixed(2).replace('.', ',') }}</p>
+          <h3>{{ produto.nome }}</h3>
+          <p>{{ produto.descricao.slice(0, 50) }}...</p>
+          <p class="price">R$ {{ produto.preco.toFixed(2).replace('.', ',') }}</p>
+          <p class="tempo-prep">⏱ {{ produto.tempoPreparo }} min</p>
         </div>
       </div>
     </div>
 
-    <ModalProduto v-if="modalAberto" :produto="produtoSelecionado" @close="fecharModal" @add="adicionarPedido" />
+    <!-- Carrinho Flutuante -->
+    <div class="carrinho-flutuante" v-if="carrinho.length > 0">
+      <h3>Seu Pedido:</h3>
+      
+      <div class="selecoes">
+        <div class="select-group">
+          <label>Mesa:</label>
+          <select v-model="selectedMesa" class="select-input">
+            <option disabled value="">Selecione a mesa</option>
+            <option v-for="mesa in mesas" :key="mesa.id" :value="mesa.id">
+              Mesa {{ mesa.numero }} ({{ mesa.capacidade }} lugares)
+            </option>
+          </select>
+        </div>
+
+        <div class="select-group">
+          <label>Garçom:</label>
+          <select v-model="selectedGarcom" class="select-input">
+            <option disabled value="">Selecione o garçom</option>
+            <option v-for="garcom in garcons" :key="garcom.id" :value="garcom.id">
+              {{ garcom.nome }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="itens-lista">
+        <div v-for="(item, index) in carrinho" :key="index" class="item-carrinho">
+          <div class="item-info">
+            <span class="quantidade">{{ item.quantidade }}x</span>
+            <span class="nome">{{ item.nome }}</span>
+            <span v-if="item.observacoes" class="observacoes">({{ item.observacoes }})</span>
+          </div>
+          <span class="subtotal">R$ {{ (item.preco * item.quantidade).toFixed(2) }}</span>
+        </div>
+      </div>
+
+      <div class="total-pedido">
+        Total: R$ {{ totalPedido.toFixed(2) }}
+      </div>
+
+      <button 
+        class="btn-confirmar"
+        :disabled="!pedidoValido"
+        @click="finalizarPedido"
+      >
+        {{ pedidoValido ? 'Finalizar Pedido' : 'Selecione Mesa e Garçom' }}
+      </button>
+    </div>
+
+    <ModalProduto 
+      v-if="modalAberto" 
+      :produto="produtoSelecionado" 
+      @close="fecharModal" 
+      @add="adicionarAoCarrinho"
+    />
   </div>
 </template>
 
 <script>
+import api from '@/services/api';
 import ModalProduto from '@/renderer/components/ModalProduto.vue';
 
 export default {
@@ -26,78 +87,104 @@ export default {
   },
   data() {
     return {
-      produtos: [
-        {
-          foto: "https://images.unsplash.com/photo-1586190848861-99aa4a171e90",
-          titulo: "Classic Burger",
-          descricao: "Pão brioche, hambúrguer 180g, queijo cheddar, alface, tomate e maionese da casa.",
-          preco: 28.9,
-          tempo_preparo: "15 min"
-        },
-        {
-          foto: "https://images.unsplash.com/photo-1553979459-d2229ba7433b?q=80&w=1368&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-          titulo: "Bacon Supreme",
-          descricao: "Hambúrguer suculento com bacon crocante, queijo prato, cebola caramelizada e molho especial.",
-          preco: 32.5,
-          tempo_preparo: "15 min"
-        },
-        {
-          foto: "https://images.unsplash.com/photo-1618219878829-8afd92751bed?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-          titulo: "Veggie Delight",
-          descricao: "Hambúrguer de grão de bico, queijo vegano, rúcula, tomate e maionese de ervas.",
-          preco: 26.0,
-          tempo_preparo: "15 min"
-        },
-        {
-          foto: "https://images.unsplash.com/photo-1676723009754-8359b42536ce?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-          titulo: "Margherita",
-          descricao: "Massa fina com molho artesanal, mussarela, tomate e manjericão fresco.",
-          preco: 45.0,
-          tempo_preparo: "25 min"
-        },
-        {
-          foto: "https://images.unsplash.com/photo-1564128442383-9201fcc740eb?q=80&w=1531&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-          titulo: "Pepperoni",
-          descricao: "Cobertura generosa de pepperoni com mussarela gratinada e toque de orégano.",
-          preco: 52.9,
-          tempo_preparo: "25 min"
-        },
-        {
-          foto: "https://images.unsplash.com/photo-1566843971939-1fe9e277a0c0?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-          titulo: "Quatro Queijos",
-          descricao: "Mussarela, gorgonzola, catupiry e parmesão sobre molho branco cremoso.",
-          preco: 54.0,
-          tempo_preparo: "25 min"
-        },
-        {
-          foto: "https://plus.unsplash.com/premium_photo-1667540791706-a123bf631f0b?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-          titulo: "Frango com Catupiry",
-          descricao: "Frango desfiado, catupiry, milho e orégano, tudo sobre uma massa fina crocante.",
-          preco: 49.5,
-          tempo_preparo: "25 min"
-        }
-      ],
+      produtos: [],
+      mesas: [],
+      garcons: [],
+      carrinho: [],
       modalAberto: false,
-      produtoSelecionado: {}
+      produtoSelecionado: null,
+      selectedMesa: null,
+      selectedGarcom: null
     };
   },
+  async created() {
+    await this.carregarDados();
+  },
+  computed: {
+    totalPedido() {
+      return this.carrinho.reduce((total, item) => {
+        return total + (item.preco * item.quantidade);
+      }, 0);
+    },
+    pedidoValido() {
+      return this.selectedMesa && this.selectedGarcom && this.carrinho.length > 0;
+    }
+  },
   methods: {
-    abrirModal(item) {
-      this.produtoSelecionado = item;
+    async carregarDados() {
+      try {
+        const [produtosRes, mesasRes, garconsRes] = await Promise.all([
+          api.getProdutos(),
+          api.getMesas(),
+          api.getGarcons()
+        ]);
+        
+        this.produtos = produtosRes.data;
+        this.mesas = mesasRes.data.filter(mesa => mesa.status === 'livre');
+        this.garcons = garconsRes.data.filter(garcom => garcom.ativo);
+      } catch (error) {
+        console.error('Erro ao carregar dados:', error);
+        alert('Erro ao carregar dados do sistema!');
+      }
+    },
+
+    abrirModal(produto) {
+      this.produtoSelecionado = produto;
       this.modalAberto = true;
     },
+
     fecharModal() {
       this.modalAberto = false;
-      this.produtoSelecionado = {};
+      this.produtoSelecionado = null;
     },
-    adicionarPedido(item) {
-      //Fazer a função
-      console.log("Pedido adicionado:", item);
+
+    adicionarAoCarrinho(dados) {
+      this.carrinho.push({
+        produtoId: dados.produto.id,
+        nome: dados.produto.nome,
+        preco: dados.produto.preco,
+        quantidade: dados.quantidade,
+        observacoes: dados.observacoes
+      });
       this.fecharModal();
+    },
+
+    async finalizarPedido() {
+      try {
+        const pedidoData = {
+          mesaId: this.selectedMesa,
+          garcomId: this.selectedGarcom,
+          itens: this.carrinho.map(item => ({
+            produtoId: item.produtoId,
+            quantidade: item.quantidade,
+            observacoes: item.observacoes
+          }))
+        };
+
+        // Cria o pedido
+        const pedidoCriado = await api.createPedido(pedidoData);
+        
+        // Atualiza status da mesa
+        await api.atualizarMesa(this.selectedMesa, {
+          status: 'ocupada',
+          pedidosAtivos: [...this.mesa.pedidosAtivos, pedidoCriado.data.id]
+        });
+
+        // Limpa carrinho e seleções
+        this.carrinho = [];
+        this.selectedMesa = null;
+        this.selectedGarcom = null;
+        
+        alert('Pedido realizado com sucesso!');
+      } catch (error) {
+        console.error('Erro ao criar pedido:', error.response?.data || error.message);
+        alert('Erro ao finalizar pedido! Verifique o console para detalhes.');
+      }
     }
   }
 };
 </script>
+
 
 <style scoped>
 .menu-container {
@@ -166,5 +253,108 @@ h2 {
   justify-content: center;
   align-items: center;
   z-index: 100;
+}
+
+.carrinho-flutuante {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 300px;
+  z-index: 1000;
+}
+
+.btn-confirmar {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.tempo-prep {
+  color: #666;
+  font-size: 0.8em;
+  margin-top: 5px;
+}
+
+.selecoes {
+  margin: 15px 0;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 15px;
+}
+
+.select-group {
+  margin-bottom: 10px;
+}
+
+.select-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+  color: #444;
+}
+
+.select-input {
+  width: 100%;
+  padding: 8px;
+  border: 2px solid #eee;
+  border-radius: 6px;
+  background: white;
+}
+
+.itens-lista {
+  max-height: 300px;
+  overflow-y: auto;
+  margin: 10px 0;
+}
+
+.item-carrinho {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.item-info {
+  flex-grow: 1;
+  margin-right: 15px;
+}
+
+.quantidade {
+  font-weight: bold;
+  margin-right: 5px;
+}
+
+.observacoes {
+  font-size: 0.8em;
+  color: #666;
+  margin-left: 5px;
+}
+
+.subtotal {
+  font-weight: 500;
+  color: #2e7d32;
+}
+
+.total-pedido {
+  text-align: right;
+  font-weight: bold;
+  font-size: 1.1em;
+  padding: 10px 0;
+  border-top: 2px solid #eee;
+  margin-top: 10px;
+}
+
+.btn-confirmar:disabled {
+  background: #cccccc;
+  cursor: not-allowed;
 }
 </style>
