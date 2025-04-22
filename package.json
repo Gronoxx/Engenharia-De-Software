@@ -7,21 +7,27 @@
     "dev": "concurrently \"npm run serve\" \"npm run server\"",
     "start": "electron .",
     "serve": "vue-cli-service serve",
-    "server": "node server.js"
+    "server": "json-server --watch db.json --port 3001"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@vue/cli-service": "^5.0.8",
+    "@vue/devtools-api": "^7.7.5",
     "electron": "^35.1.5",
+    "json-server": "^0.17.3",
     "vue": "^3.5.13",
-    "vue-cli-service": "^5.0.0"
+    "vue-cli-service": "^5.0.0",
+    "vue-loader": "^17.4.2",
+    "webpack": "^5.99.6",
+    "webpack-cli": "^4.10.0",
+    "webpack-dev-server": "^4.15.2"
   },
   "dependencies": {
     "axios": "^1.8.4",
     "concurrently": "^9.1.2",
-    "json-server": "^1.0.0-beta.3",
+    "vue": "^3.5.13",
     "vue-router": "^4.5.0"
   }
 }

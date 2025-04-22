@@ -151,24 +151,56 @@ export default {
 
     async finalizarPedido() {
       try {
+        // Cálculo do valor total no frontend
+        const valorTotal = this.carrinho.reduce((total, item) => {
+          return total + item.preco * item.quantidade;
+        }, 0);
+
         const pedidoData = {
           mesaId: this.selectedMesa,
           garcomId: this.selectedGarcom,
           itens: this.carrinho.map(item => ({
             produtoId: item.produtoId,
             quantidade: item.quantidade,
-            observacoes: item.observacoes
-          }))
+            observacoes: item.observacoes,
+            precoUnitario: item.preco // Adicionado cálculo histórico
+          })),
+          valorTotal: valorTotal,
         };
 
+
         // Cria o pedido
-        const pedidoCriado = await api.createPedido(pedidoData);
+        const pedidoResponse = await api.createPedido(pedidoData);
         
-        // Atualiza status da mesa
-        await api.atualizarMesa(this.selectedMesa, {
-          status: 'ocupada',
-          pedidosAtivos: [...this.mesa.pedidosAtivos, pedidoCriado.data.id]
-        });
+        if (!this.selectedMesa) throw new Error("Nenhuma mesa selecionada");
+        const mesaId = Number(this.selectedMesa);
+
+        const mesaResponse = await api.getMesas();
+
+        console.log("Resposta completa da API:", mesaResponse);
+        
+        if (!mesaResponse) throw new Error("Erro ao pegar dados da Mesa");
+
+        const mesaAtual = mesaResponse.data.find(m => m.id === mesaId);
+
+        if (!mesaAtual) {
+          throw new Error(`Mesa ${mesaId} não encontrada. Dados recebidos: ${JSON.stringify(mesaResponse.data)}`);
+        }
+
+        
+
+        const atualizacaoMesa = {
+        status: "ocupada",
+        pedidosAtivos: [
+          ...(mesaAtual.pedidosAtivos || []),
+          pedidoResponse.data.id
+        ]
+        };
+
+   
+        await api.atualizarMesa(mesaId, atualizacaoMesa);
+        
+
 
         // Limpa carrinho e seleções
         this.carrinho = [];
@@ -177,8 +209,8 @@ export default {
         
         alert('Pedido realizado com sucesso!');
       } catch (error) {
-        console.error('Erro ao criar pedido:', error.response?.data || error.message);
-        alert('Erro ao finalizar pedido! Verifique o console para detalhes.');
+        console.error('Erro completo:', error);
+        alert(error.message);
       }
     }
   }

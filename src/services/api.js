@@ -28,7 +28,8 @@ export default {
       })),
       mesaId: pedidoData.mesaId,
       garcomId: pedidoData.garcomId,
-      dataAbertura: new Date().toISOString()
+      dataAbertura: new Date().toISOString(),
+      valorTotal: pedidoData.valorTotal
     });
   },
 
@@ -47,11 +48,29 @@ export default {
 
   // Mesas
   getMesas() {
-    return api.get('/mesas');
+    return api.get('/mesas')
+      .then(response => {
+        console.log("Resposta bruta de /mesas:", response); // Debug
+        return response;
+      })
+      .catch(error => {
+        console.error("Erro na requisição getMesas:", error);
+        throw error;
+      });
   },
 
   atualizarMesa(id, updates) {
-    return api.patch(`/mesas/${id}`, updates);
+    console.log('Atualizando mesa ID:', id);
+    console.log('Dados de atualização:', updates);
+    return api.patch(`/mesas/${id}`, updates)
+      .then(response => {
+        console.log('Resposta da atualização:', response.data);
+        return response;
+      })
+      .catch(error => {
+        console.error('Erro na atualização:', error.response?.data);
+        throw error;
+      });
   },
 
   // Garçons
