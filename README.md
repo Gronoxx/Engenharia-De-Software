@@ -28,3 +28,9 @@ Este projeto visa desenvolver um sistema de gerenciamento de pedidos para restau
 - **Versionamento:** *Git (GitHub)*
 - **Metodologia:** *Scrum-like*
 
+- ##  **Para Rodar**
+
+```
+npm run dev
+```
+
