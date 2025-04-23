@@ -1,46 +1,39 @@
 <template>
   <div class="modal" @click.self="$emit('close')">
     <div class="modal-content">
-      <img :src="produto.foto" :alt="produto.nome" />
-      <h2>{{ produto.nome }}</h2>
-      <div class="details">
-        <p class="description">{{ produto.descricao }}</p>
-        <div class="info-grid">
-          <div class="info-item">
-            <span class="label">Preço:</span>
-            <span class="value">R$ {{ produto.preco.toFixed(2).replace('.', ',') }}</span>
+      <div class="modal-scroll">
+        <img :src="produto.foto" :alt="produto.nome" />
+        <h2>{{ produto.nome }}</h2>
+        <div class="details">
+          <p class="description">{{ produto.descricao }}</p>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="label">Preço:</span>
+              <span class="value">R$ {{ produto.preco.toFixed(2).replace('.', ',') }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Tempo:</span>
+              <span class="value">{{ produto.tempoPreparo }} minutos</span>
+            </div>
           </div>
-          <div class="info-item">
-            <span class="label">Tempo:</span>
-            <span class="value">{{ produto.tempoPreparo }} minutos</span>
+        </div>
+
+        <div class="controls">
+          <div class="quantity-control">
+            <label>Quantidade:</label>
+            <input type="number" v-model.number="quantidade" min="1" class="quantity-input" />
+          </div>
+
+          <div class="observations">
+            <label>Observações:</label>
+            <textarea v-model="observacoes" placeholder="Ex: Sem cebola, ponto da carne..." rows="2"></textarea>
           </div>
         </div>
-      </div>
 
-      <div class="controls">
-        <div class="quantity-control">
-          <label>Quantidade:</label>
-          <input
-            type="number"
-            v-model.number="quantidade"
-            min="1"
-            class="quantity-input"
-          />
-        </div>
-        
-        <div class="observations">
-          <label>Observações:</label>
-          <textarea
-            v-model="observacoes"
-            placeholder="Ex: Sem cebola, ponto da carne..."
-            rows="2"
-          ></textarea>
-        </div>
+        <button class="add-btn" @click="handleAdd">
+          Adicionar Pedido ({{ totalItem }})
+        </button>
       </div>
-
-      <button class="add-btn" @click="handleAdd">
-        Adicionar Pedido ({{ totalItem }})
-      </button>
     </div>
   </div>
 </template>
@@ -82,13 +75,36 @@ export default {
 </script>
 
 <style scoped>
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
 .modal-content {
   background: #fff;
-  padding: 25px;
   border-radius: 12px;
-  width: 90%;
+  width: 100%;
   max-width: 450px;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+  max-height: 90vh;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-scroll {
+  padding: 25px;
+  overflow-y: auto;
 }
 
 .modal-content img {
@@ -96,7 +112,6 @@ export default {
   height: 200px;
   object-fit: cover;
   border-radius: 8px;
-  margin-bottom: 15px;
 }
 
 .details {

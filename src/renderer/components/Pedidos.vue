@@ -1,7 +1,7 @@
 <template>
   <div class="pedidos-container">
     <h2>Pedidos Ativos</h2>
-    
+
     <!-- Loading State -->
     <div v-if="loading" class="loading">Carregando pedidos...</div>
 
@@ -13,7 +13,7 @@
       <div v-for="pedido in pedidos" :key="pedido.id" class="pedido-card">
         <div class="pedido-header">
           <h3>Pedido #{{ pedido.id }}</h3>
-          <span class="status" :class="pedido.status">{{ pedido.status }}</span>
+          <span class="status" :class="pedido.status">{{ formatarStatus(pedido.status) }}</span>
         </div>
         <p class="mesa">Mesa: {{ pedido.mesaId }}</p>
         <p class="tempo">Tempo decorrido: {{ pedido.tempoDecorrido }}</p>
@@ -22,7 +22,7 @@
           <h4>Itens:</h4>
           <ul>
             <li v-for="(item, index) in pedido.itens" :key="index">
-              {{ item.quantidade }}x {{ getProductName(item.produtoId) }} 
+              {{ item.quantidade }}x {{ getProductName(item.produtoId) }}
               <span v-if="item.observacoes">({{ item.observacoes }})</span>
             </li>
           </ul>
@@ -67,37 +67,49 @@ export default {
         ...pedido,
         tempoDecorrido: this.calcularTempoDecorrido(pedido.dataAbertura)
       }));
-      
+
       const produtosResponse = await api.getProdutos();
       this.produtos = produtosResponse.data;
       this.loading = false;
     },
+
     updateTempos() {
       this.pedidos = this.pedidos.map(pedido => ({
         ...pedido,
         tempoDecorrido: this.calcularTempoDecorrido(pedido.dataAbertura)
       }));
     },
+
     calcularTempoDecorrido(dataAbertura) {
-  const agora = new Date();
-  const abertura = new Date(dataAbertura);
-  const diff = agora - abertura;
-  
-  // Converter para horas e minutos
-  const horas = Math.floor(diff / (1000 * 60 * 60));
-  const minutos = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-  
-  return `${horas}h ${minutos}min`;
-},
-getProductName(produtoId) {
+      const agora = new Date();
+      const abertura = new Date(dataAbertura);
+      const diff = agora - abertura;
+
+      // Converter para horas e minutos
+      const horas = Math.floor(diff / (1000 * 60 * 60));
+      const minutos = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+      return `${horas}h ${minutos}min`;
+    },
+
+    getProductName(produtoId) {
       const produto = this.produtos.find(p => p.id === produtoId);
       return produto ? produto.nome : 'Produto não encontrado';
-},
-formatarValor(valor) {
+    },
+
+    formatarValor(valor) {
       return Number(valor || 0).toFixed(2).replace('.', ',');
-}
-    
-}
+    },
+
+    formatarStatus(status) {
+      const mapa = {
+        em_preparo: 'Em preparo',
+        pronto: 'Pronto',
+        entregue: 'Entregue'
+      };
+      return mapa[status] || status;
+    }
+  }
 };
 </script>
 
@@ -111,7 +123,7 @@ formatarValor(valor) {
   border-radius: 8px;
   padding: 15px;
   margin: 10px 0;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .status {
@@ -130,7 +142,8 @@ formatarValor(valor) {
   color: #155724;
 }
 
-.loading, .error {
+.loading,
+.error {
   padding: 20px;
   text-align: center;
 }
