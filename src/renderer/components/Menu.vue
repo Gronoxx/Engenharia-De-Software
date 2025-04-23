@@ -1,12 +1,7 @@
 <template>
-  <div class="menu-container">
+  <div class="menu-container" :class="{ 'shrinked': isCartOpen }">
     <div class="grid">
-      <div 
-        class="card" 
-        v-for="produto in produtos" 
-        :key="produto.id" 
-        @click="abrirModal(produto)"
-      >
+      <div class="card" v-for="produto in produtos" :key="produto.id" @click="abrirModal(produto)">
         <img :src="`http://localhost:3001${produto.foto}`" :alt="produto.nome" />
         <div class="card-content">
           <h3>{{ produto.nome }}</h3>
@@ -18,9 +13,9 @@
     </div>
 
     <!-- Carrinho Flutuante -->
-    <div class="carrinho-flutuante" v-if="carrinho.length > 0">
+    <div class="carrinho-flutuante" v-if="carrinho.length > 0 && mostrarCarrinho">
+      <button class="btn-fechar-carrinho" @click="fecharCarrinho">✕</button>
       <h3>Seu Pedido:</h3>
-      
       <div class="selecoes">
         <div class="select-group">
           <label>Mesa:</label>
@@ -50,29 +45,20 @@
             <span class="nome">{{ item.nome }}</span>
             <span v-if="item.observacoes" class="observacoes">({{ item.observacoes }})</span>
           </div>
-          <span class="subtotal">R$ {{ (item.preco * item.quantidade).toFixed(2) }}</span>
+          <span class="subtotal">R$ {{ (item.preco * item.quantidade).toFixed(2).replace('.', ',') }}</span>
         </div>
       </div>
 
       <div class="total-pedido">
-        Total: R$ {{ totalPedido.toFixed(2) }}
+        Total: R$ {{ totalPedido.toFixed(2).replace('.', ',') }}
       </div>
 
-      <button 
-        class="btn-confirmar"
-        :disabled="!pedidoValido"
-        @click="finalizarPedido"
-      >
+      <button class="btn-confirmar" :disabled="!pedidoValido" @click="finalizarPedido">
         {{ pedidoValido ? 'Finalizar Pedido' : 'Selecione Mesa e Garçom' }}
       </button>
     </div>
 
-    <ModalProduto 
-      v-if="modalAberto" 
-      :produto="produtoSelecionado" 
-      @close="fecharModal" 
-      @add="adicionarAoCarrinho"
-    />
+    <ModalProduto v-if="modalAberto" :produto="produtoSelecionado" @close="fecharModal" @add="adicionarAoCarrinho" />
   </div>
 </template>
 
@@ -94,7 +80,8 @@ export default {
       modalAberto: false,
       produtoSelecionado: null,
       selectedMesa: null,
-      selectedGarcom: null
+      selectedGarcom: null,
+      mostrarCarrinho: true
     };
   },
   async created() {
@@ -118,7 +105,7 @@ export default {
           api.getMesas(),
           api.getGarcons()
         ]);
-        
+
         this.produtos = produtosRes.data;
         this.mesas = mesasRes.data.filter(mesa => mesa.status === 'livre');
         this.garcons = garconsRes.data.filter(garcom => garcom.ativo);
@@ -146,7 +133,13 @@ export default {
         quantidade: dados.quantidade,
         observacoes: dados.observacoes
       });
+      this.mostrarCarrinho = true;
       this.fecharModal();
+    },
+
+    fecharCarrinho() {
+      this.carrinho = [];
+      this.mostrarCarrinho = false;
     },
 
     async finalizarPedido() {
@@ -171,14 +164,12 @@ export default {
 
         // Cria o pedido
         const pedidoResponse = await api.createPedido(pedidoData);
-        
         if (!this.selectedMesa) throw new Error("Nenhuma mesa selecionada");
         const mesaId = Number(this.selectedMesa);
 
         const mesaResponse = await api.getMesas();
 
         console.log("Resposta completa da API:", mesaResponse);
-        
         if (!mesaResponse) throw new Error("Erro ao pegar dados da Mesa");
 
         const mesaAtual = mesaResponse.data.find(m => m.id === mesaId);
@@ -187,26 +178,21 @@ export default {
           throw new Error(`Mesa ${mesaId} não encontrada. Dados recebidos: ${JSON.stringify(mesaResponse.data)}`);
         }
 
-        
 
         const atualizacaoMesa = {
-        status: "ocupada",
-        pedidosAtivos: [
-          ...(mesaAtual.pedidosAtivos || []),
-          pedidoResponse.data.id
-        ]
+          status: "ocupada",
+          pedidosAtivos: [
+            ...(mesaAtual.pedidosAtivos || []),
+            pedidoResponse.data.id
+          ]
         };
 
-   
         await api.atualizarMesa(mesaId, atualizacaoMesa);
-        
-
 
         // Limpa carrinho e seleções
         this.carrinho = [];
         this.selectedMesa = null;
         this.selectedGarcom = null;
-        
         alert('Pedido realizado com sucesso!');
       } catch (error) {
         console.error('Erro completo:', error);
@@ -308,6 +294,21 @@ h2 {
   cursor: pointer;
   width: 100%;
   margin-top: 10px;
+}
+
+.btn-fechar-carrinho {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: #666;
+}
+
+.btn-fechar-carrinho:hover {
+  color: #000;
 }
 
 .tempo-prep {
