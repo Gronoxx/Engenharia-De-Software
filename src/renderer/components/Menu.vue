@@ -1,75 +1,85 @@
 <template>
-  <div class="menu-container" :class="{ 'shrinked': isCartOpen }">
-    <div class="grid">
-      <div class="card" v-for="produto in produtos" :key="produto.id" @click="abrirModal(produto)">
-        <img :src="`http://localhost:3001${produto.foto}`" :alt="produto.nome" />
-        <div class="card-content">
-          <h3>{{ produto.nome }}</h3>
-          <p>{{ produto.descricao.slice(0, 50) }}...</p>
-          <p class="price">R$ {{ produto.preco.toFixed(2).replace('.', ',') }}</p>
-          <p class="tempo-prep">⏱ {{ produto.tempoPreparo }} min</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Carrinho Flutuante -->
-    <div class="carrinho-flutuante" v-if="carrinho.length > 0 && mostrarCarrinho">
-      <button class="btn-fechar-carrinho" @click="fecharCarrinho">✕</button>
-      <h3>Seu Pedido:</h3>
-      <div class="selecoes">
-        <div class="select-group">
-          <label>Mesa:</label>
-          <select v-model="selectedMesa" class="select-input">
-            <option disabled value="">Selecione a mesa</option>
-            <option v-for="mesa in mesas" :key="mesa.id" :value="mesa.id">
-              Mesa {{ mesa.numero }} ({{ mesa.capacidade }} lugares)
-            </option>
-          </select>
-        </div>
-
-        <div class="select-group">
-          <label>Garçom:</label>
-          <select v-model="selectedGarcom" class="select-input">
-            <option disabled value="">Selecione o garçom</option>
-            <option v-for="garcom in garcons" :key="garcom.id" :value="garcom.id">
-              {{ garcom.nome }}
-            </option>
-          </select>
-        </div>
-      </div>
-
-      <div class="itens-lista">
-        <div v-for="(item, index) in carrinho" :key="index" class="item-carrinho">
-          <div class="item-info">
-            <span class="quantidade">{{ item.quantidade }}x</span>
-            <span class="nome">{{ item.nome }}</span>
-            <span v-if="item.observacoes" class="observacoes">({{ item.observacoes }})</span>
+  <div class="menu-layout">
+    <div class="produtos">
+      <div class="grid">
+        <div class="card" v-for="produto in produtos" :key="produto.id" @click="abrirModal(produto)">
+          <img :src="`http://localhost:3001${produto.foto}`" :alt="produto.nome" />
+          <div class="card-content">
+            <h3>{{ produto.nome }}</h3>
+            <p>{{ produto.descricao.slice(0, 50) }}...</p>
+            <p class="price">R$ {{ produto.preco.toFixed(2).replace('.', ',') }}</p>
+            <p class="tempo-prep">⏱ {{ produto.tempoPreparo }} min</p>
           </div>
-          <span class="subtotal">R$ {{ (item.preco * item.quantidade).toFixed(2).replace('.', ',') }}</span>
         </div>
       </div>
-
-      <div class="total-pedido">
-        Total: R$ {{ totalPedido.toFixed(2).replace('.', ',') }}
-      </div>
-
-      <button class="btn-confirmar" :disabled="!pedidoValido" @click="finalizarPedido">
-        {{ pedidoValido ? 'Finalizar Pedido' : 'Selecione Mesa e Garçom' }}
-      </button>
     </div>
+
+    <!-- Carrinho -->
+    <transition name="fade-slide">
+      <div class="carrinho-lateral" v-if="carrinho.length > 0 && mostrarCarrinho">
+        <button class="btn-fechar-carrinho" @click="fecharCarrinho">✕</button>
+        <h3>Seu Pedido:</h3>
+        <div class="selecoes">
+          <div class="select-group">
+            <label>Mesa:</label>
+            <select v-model="selectedMesa" class="select-input">
+              <option disabled value="">Selecione a mesa</option>
+              <option v-for="mesa in mesas" :key="mesa.id" :value="mesa.id">
+                Mesa {{ mesa.numero }} ({{ mesa.capacidade }} lugares)
+              </option>
+            </select>
+          </div>
+
+          <div class="select-group">
+            <label>Garçom:</label>
+            <select v-model="selectedGarcom" class="select-input">
+              <option disabled value="">Selecione o garçom</option>
+              <option v-for="garcom in garcons" :key="garcom.id" :value="garcom.id">
+                {{ garcom.nome }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="itens-lista">
+          <div v-for="(item, index) in carrinho" :key="index" class="item-carrinho">
+            <div class="item-info">
+              <span class="quantidade">{{ item.quantidade }}x</span>
+              <span class="nome">{{ item.nome }}</span>
+              <span v-if="item.observacoes" class="observacoes">({{ item.observacoes }})</span>
+            </div>
+            <span class="subtotal">R$ {{ (item.preco * item.quantidade).toFixed(2).replace('.', ',') }}</span>
+            <button class="btn-remover" @click="removerDoCarrinho(index)">
+              <IconeLixeira />
+            </button>
+          </div>
+        </div>
+
+        <div class="total-pedido">
+          Total: R$ {{ totalPedido.toFixed(2).replace('.', ',') }}
+        </div>
+
+        <button class="btn-confirmar" :disabled="!pedidoValido" @click="finalizarPedido">
+          {{ pedidoValido ? 'Finalizar Pedido' : 'Selecione Mesa e Garçom' }}
+        </button>
+      </div>
+    </transition>
 
     <ModalProduto v-if="modalAberto" :produto="produtoSelecionado" @close="fecharModal" @add="adicionarAoCarrinho" />
   </div>
 </template>
 
+
 <script>
 import api from '@/services/api';
 import ModalProduto from '@/renderer/components/ModalProduto.vue';
+import IconeLixeira from '@/renderer/components/icons/IconeLixeira.vue';
 
 export default {
   name: 'Menu',
   components: {
-    ModalProduto
+    ModalProduto,
+    IconeLixeira
   },
   data() {
     return {
@@ -84,9 +94,6 @@ export default {
       mostrarCarrinho: true
     };
   },
-  async created() {
-    await this.carregarDados();
-  },
   computed: {
     totalPedido() {
       return this.carrinho.reduce((total, item) => {
@@ -96,6 +103,9 @@ export default {
     pedidoValido() {
       return this.selectedMesa && this.selectedGarcom && this.carrinho.length > 0;
     }
+  },
+  async created() {
+    await this.carregarDados();
   },
   methods: {
     async carregarDados() {
@@ -138,7 +148,6 @@ export default {
     },
 
     fecharCarrinho() {
-      this.carrinho = [];
       this.mostrarCarrinho = false;
     },
 
@@ -198,6 +207,10 @@ export default {
         console.error('Erro completo:', error);
         alert(error.message);
       }
+    },
+
+    removerDoCarrinho(index) {
+      this.carrinho.splice(index, 1);
     }
   }
 };
@@ -205,13 +218,16 @@ export default {
 
 
 <style scoped>
-.menu-container {
+
+/* Geral */
+.menu-layout {
+  display: flex;
   padding: 20px;
+  gap: 20px;
 }
 
-h2 {
-  text-align: center;
-  margin-bottom: 20px;
+.produtos {
+  flex: 1;
 }
 
 .grid {
@@ -220,6 +236,8 @@ h2 {
   gap: 20px;
 }
 
+
+/* Produtos */
 .card {
   background: #fff;
   border: 1px solid #ccc;
@@ -254,67 +272,44 @@ h2 {
   color: #666;
 }
 
+.tempo-prep {
+  color: #666;
+  font-size: 0.8em;
+  margin-top: 5px;
+}
+
 .card-content .price {
   margin-top: 8px;
   font-weight: bold;
   color: #000;
 }
 
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 100;
-}
+/* Carrinho */
 
-.carrinho-flutuante {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
+.carrinho-lateral {
+  width: 300px;
   background: white;
   padding: 15px;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  width: 300px;
-  z-index: 1000;
-}
-
-.btn-confirmar {
-  background: #4CAF50;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  width: 100%;
-  margin-top: 10px;
+  height: fit-content;
+  position: sticky;
+  top: 20px;
 }
 
 .btn-fechar-carrinho {
   position: absolute;
-  top: 5px;
+  top: 10px;
   right: 10px;
   background: transparent;
   border: none;
-  font-size: 18px;
+  font-size: 15px;
   cursor: pointer;
-  color: #666;
+  color: #888;
 }
 
 .btn-fechar-carrinho:hover {
   color: #000;
-}
-
-.tempo-prep {
-  color: #666;
-  font-size: 0.8em;
-  margin-top: 5px;
 }
 
 .selecoes {
@@ -386,8 +381,53 @@ h2 {
   margin-top: 10px;
 }
 
+/* Botões */
+
+.btn-remover {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: #e74c3c;
+  margin-left: 10px;
+}
+
+.btn-remover:hover {
+  color: #c0392b;
+}
+
+.btn-confirmar {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 10px;
+}
+
 .btn-confirmar:disabled {
-  background: #cccccc;
+  background: #bdbdbd;
   cursor: not-allowed;
+}
+
+/* Animações */
+
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.fade-slide-enter-from,
+.fade-slide-leave-to {
+  opacity: 0;
+  transform: translateX(50px);
+}
+
+.fade-slide-enter-to,
+.fade-slide-leave-from {
+  opacity: 1;
+  transform: translateX(0);
 }
 </style>
