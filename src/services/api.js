@@ -85,5 +85,29 @@ export default {
 
   atualizarIngrediente(id, updates) {
     return api.patch(`/ingredientes/${id}`, updates);
-  }
+  },
+
+  adicionarEstoque(ingredienteId, quantidadeAdicionar) {
+    // Primeiro busca o ingrediente atual para somar a quantidade
+    return api.get(`/ingredientes/${ingredienteId}`).then(response => {
+      const ingredienteAtual = response.data;
+      return api.patch(`/ingredientes/${ingredienteId}`, {
+        quantidadeEstoque: ingredienteAtual.quantidadeEstoque + quantidadeAdicionar
+      });
+    });
+  },
+
+  retirarEstoque(ingredienteId, quantidadeRetirar) {
+    // Primeiro busca o ingrediente atual para subtrair a quantidade
+    return api.get(`/ingredientes/${ingredienteId}`).then(response => {
+      const ingredienteAtual = response.data;
+      let novaQuantidade = ingredienteAtual.quantidadeEstoque - quantidadeRetirar;
+
+      if (novaQuantidade < 0) novaQuantidade = 0; // Não deixa ficar negativo!
+
+      return api.patch(`/ingredientes/${ingredienteId}`, {
+        quantidadeEstoque: novaQuantidade
+      });
+    });
+  },
 };
