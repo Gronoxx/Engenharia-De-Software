@@ -49,6 +49,9 @@
               <span v-if="item.observacoes" class="observacoes">({{ item.observacoes }})</span>
             </div>
             <span class="subtotal">R$ {{ (item.preco * item.quantidade).toFixed(2).replace('.', ',') }}</span>
+            <button class="btn-remover" @click="removerDoCarrinho(index)">
+              <IconeLixeira />
+            </button>
           </div>
         </div>
 
@@ -70,11 +73,13 @@
 <script>
 import api from '@/services/api';
 import ModalProduto from '@/renderer/components/ModalProduto.vue';
+import IconeLixeira from '@/renderer/components/icons/IconeLixeira.vue';
 
 export default {
   name: 'Menu',
   components: {
-    ModalProduto
+    ModalProduto,
+    IconeLixeira
   },
   data() {
     return {
@@ -143,7 +148,6 @@ export default {
     },
 
     fecharCarrinho() {
-      this.carrinho = [];
       this.mostrarCarrinho = false;
     },
 
@@ -203,6 +207,10 @@ export default {
         console.error('Erro completo:', error);
         alert(error.message);
       }
+    },
+
+    removerDoCarrinho(index) {
+      this.carrinho.splice(index, 1);
     }
   }
 };
@@ -374,6 +382,19 @@ export default {
 }
 
 /* Botões */
+
+.btn-remover {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: #e74c3c;
+  margin-left: 10px;
+}
+
+.btn-remover:hover {
+  color: #c0392b;
+}
 
 .btn-confirmar {
   background: #4CAF50;
