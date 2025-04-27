@@ -1,66 +1,71 @@
 <template>
-  <div class="menu-container" :class="{ 'shrinked': isCartOpen }">
-    <div class="grid">
-      <div class="card" v-for="produto in produtos" :key="produto.id" @click="abrirModal(produto)">
-        <img :src="`http://localhost:3001${produto.foto}`" :alt="produto.nome" />
-        <div class="card-content">
-          <h3>{{ produto.nome }}</h3>
-          <p>{{ produto.descricao.slice(0, 50) }}...</p>
-          <p class="price">R$ {{ produto.preco.toFixed(2).replace('.', ',') }}</p>
-          <p class="tempo-prep">⏱ {{ produto.tempoPreparo }} min</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Carrinho Flutuante -->
-    <div class="carrinho-flutuante" v-if="carrinho.length > 0 && mostrarCarrinho">
-      <button class="btn-fechar-carrinho" @click="fecharCarrinho">✕</button>
-      <h3>Seu Pedido:</h3>
-      <div class="selecoes">
-        <div class="select-group">
-          <label>Mesa:</label>
-          <select v-model="selectedMesa" class="select-input">
-            <option disabled value="">Selecione a mesa</option>
-            <option v-for="mesa in mesas" :key="mesa.id" :value="mesa.id">
-              Mesa {{ mesa.numero }} ({{ mesa.capacidade }} lugares)
-            </option>
-          </select>
-        </div>
-
-        <div class="select-group">
-          <label>Garçom:</label>
-          <select v-model="selectedGarcom" class="select-input">
-            <option disabled value="">Selecione o garçom</option>
-            <option v-for="garcom in garcons" :key="garcom.id" :value="garcom.id">
-              {{ garcom.nome }}
-            </option>
-          </select>
-        </div>
-      </div>
-
-      <div class="itens-lista">
-        <div v-for="(item, index) in carrinho" :key="index" class="item-carrinho">
-          <div class="item-info">
-            <span class="quantidade">{{ item.quantidade }}x</span>
-            <span class="nome">{{ item.nome }}</span>
-            <span v-if="item.observacoes" class="observacoes">({{ item.observacoes }})</span>
+  <div class="menu-layout">
+    <div class="produtos">
+      <div class="grid">
+        <div class="card" v-for="produto in produtos" :key="produto.id" @click="abrirModal(produto)">
+          <img :src="`http://localhost:3001${produto.foto}`" :alt="produto.nome" />
+          <div class="card-content">
+            <h3>{{ produto.nome }}</h3>
+            <p>{{ produto.descricao.slice(0, 50) }}...</p>
+            <p class="price">R$ {{ produto.preco.toFixed(2).replace('.', ',') }}</p>
+            <p class="tempo-prep">⏱ {{ produto.tempoPreparo }} min</p>
           </div>
-          <span class="subtotal">R$ {{ (item.preco * item.quantidade).toFixed(2).replace('.', ',') }}</span>
         </div>
       </div>
-
-      <div class="total-pedido">
-        Total: R$ {{ totalPedido.toFixed(2).replace('.', ',') }}
-      </div>
-
-      <button class="btn-confirmar" :disabled="!pedidoValido" @click="finalizarPedido">
-        {{ pedidoValido ? 'Finalizar Pedido' : 'Selecione Mesa e Garçom' }}
-      </button>
     </div>
+
+    <!-- Carrinho -->
+    <transition name="fade-slide">
+      <div class="carrinho-lateral" v-if="carrinho.length > 0 && mostrarCarrinho">
+        <button class="btn-fechar-carrinho" @click="fecharCarrinho">✕</button>
+        <h3>Seu Pedido:</h3>
+        <div class="selecoes">
+          <div class="select-group">
+            <label>Mesa:</label>
+            <select v-model="selectedMesa" class="select-input">
+              <option disabled value="">Selecione a mesa</option>
+              <option v-for="mesa in mesas" :key="mesa.id" :value="mesa.id">
+                Mesa {{ mesa.numero }} ({{ mesa.capacidade }} lugares)
+              </option>
+            </select>
+          </div>
+
+          <div class="select-group">
+            <label>Garçom:</label>
+            <select v-model="selectedGarcom" class="select-input">
+              <option disabled value="">Selecione o garçom</option>
+              <option v-for="garcom in garcons" :key="garcom.id" :value="garcom.id">
+                {{ garcom.nome }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="itens-lista">
+          <div v-for="(item, index) in carrinho" :key="index" class="item-carrinho">
+            <div class="item-info">
+              <span class="quantidade">{{ item.quantidade }}x</span>
+              <span class="nome">{{ item.nome }}</span>
+              <span v-if="item.observacoes" class="observacoes">({{ item.observacoes }})</span>
+            </div>
+            <span class="subtotal">R$ {{ (item.preco * item.quantidade).toFixed(2).replace('.', ',') }}</span>
+          </div>
+        </div>
+
+        <div class="total-pedido">
+          Total: R$ {{ totalPedido.toFixed(2).replace('.', ',') }}
+        </div>
+
+        <button class="btn-confirmar" :disabled="!pedidoValido" @click="finalizarPedido">
+          {{ pedidoValido ? 'Finalizar Pedido' : 'Selecione Mesa e Garçom' }}
+        </button>
+      </div>
+    </transition>
 
     <ModalProduto v-if="modalAberto" :produto="produtoSelecionado" @close="fecharModal" @add="adicionarAoCarrinho" />
   </div>
 </template>
+
 
 <script>
 import api from '@/services/api';
@@ -84,9 +89,6 @@ export default {
       mostrarCarrinho: true
     };
   },
-  async created() {
-    await this.carregarDados();
-  },
   computed: {
     totalPedido() {
       return this.carrinho.reduce((total, item) => {
@@ -96,6 +98,9 @@ export default {
     pedidoValido() {
       return this.selectedMesa && this.selectedGarcom && this.carrinho.length > 0;
     }
+  },
+  async created() {
+    await this.carregarDados();
   },
   methods: {
     async carregarDados() {
@@ -205,13 +210,15 @@ export default {
 
 
 <style scoped>
-.menu-container {
+
+.menu-layout {
+  display: flex;
   padding: 20px;
+  gap: 20px;
 }
 
-h2 {
-  text-align: center;
-  margin-bottom: 20px;
+.produtos {
+  flex: 1;
 }
 
 .grid {
@@ -219,6 +226,7 @@ h2 {
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 20px;
 }
+
 
 .card {
   background: #fff;
@@ -260,31 +268,6 @@ h2 {
   color: #000;
 }
 
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 100;
-}
-
-.carrinho-flutuante {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: white;
-  padding: 15px;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  width: 300px;
-  z-index: 1000;
-}
-
 .btn-confirmar {
   background: #4CAF50;
   color: white;
@@ -296,15 +279,26 @@ h2 {
   margin-top: 10px;
 }
 
+.carrinho-lateral {
+  width: 300px;
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  height: fit-content;
+  position: sticky;
+  top: 20px;
+}
+
 .btn-fechar-carrinho {
   position: absolute;
-  top: 5px;
+  top: 10px;
   right: 10px;
   background: transparent;
   border: none;
-  font-size: 18px;
+  font-size: 15px;
   cursor: pointer;
-  color: #666;
+  color: #888;
 }
 
 .btn-fechar-carrinho:hover {
@@ -389,5 +383,22 @@ h2 {
 .btn-confirmar:disabled {
   background: #cccccc;
   cursor: not-allowed;
+}
+
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.fade-slide-enter-from,
+.fade-slide-leave-to {
+  opacity: 0;
+  transform: translateX(50px);
+}
+
+.fade-slide-enter-to,
+.fade-slide-leave-from {
+  opacity: 1;
+  transform: translateX(0);
 }
 </style>
