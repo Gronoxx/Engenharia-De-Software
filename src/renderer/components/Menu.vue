@@ -211,6 +211,7 @@ export default {
 
 <style scoped>
 
+/* Geral */
 .menu-layout {
   display: flex;
   padding: 20px;
@@ -228,6 +229,7 @@ export default {
 }
 
 
+/* Produtos */
 .card {
   background: #fff;
   border: 1px solid #ccc;
@@ -262,22 +264,19 @@ export default {
   color: #666;
 }
 
+.tempo-prep {
+  color: #666;
+  font-size: 0.8em;
+  margin-top: 5px;
+}
+
 .card-content .price {
   margin-top: 8px;
   font-weight: bold;
   color: #000;
 }
 
-.btn-confirmar {
-  background: #4CAF50;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  width: 100%;
-  margin-top: 10px;
-}
+/* Carrinho */
 
 .carrinho-lateral {
   width: 300px;
@@ -303,12 +302,6 @@ export default {
 
 .btn-fechar-carrinho:hover {
   color: #000;
-}
-
-.tempo-prep {
-  color: #666;
-  font-size: 0.8em;
-  margin-top: 5px;
 }
 
 .selecoes {
@@ -380,10 +373,25 @@ export default {
   margin-top: 10px;
 }
 
+/* Botões */
+
+.btn-confirmar {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 10px;
+}
+
 .btn-confirmar:disabled {
-  background: #cccccc;
+  background: #bdbdbd;
   cursor: not-allowed;
 }
+
+/* Animações */
 
 .fade-slide-enter-active,
 .fade-slide-leave-active {
