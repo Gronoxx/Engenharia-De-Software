@@ -7,7 +7,7 @@
 ### 🪑 Mesa
 
 ```json
-{
+{ 
   "id": 1,
   "numero": "A1",
   "status": "ocupada",

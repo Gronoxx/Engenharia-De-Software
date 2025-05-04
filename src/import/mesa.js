@@ -1,6 +1,6 @@
 let contadorIdMesa = 1; // controle interno para gerar IDs únicos no sistema
 
-class Mesa {
+export default class Mesa {
   constructor(numero, capacidade) {
     this.id = contadorIdMesa++;       // ID interno do sistema
     this.numero = numero;             // Número da mesa (visível)
@@ -31,5 +31,16 @@ class Mesa {
 
   listarPedidos() {
     return this.pedidos;
+  }
+
+  toJSON(){
+    return{
+      id: this.id,        // ID interno do sistema
+      numero: this.numero,             // Número da mesa (visível)
+      status: this.status,            // 'livre' ou 'ocupada'
+      capacidade: this.capacidade,     // Quantas pessoas comporta
+      pedidos: this.pedidos,                // Lista de pedidos feitos
+      valorTotal: this.valorTotal   
+    };
   }
 }
