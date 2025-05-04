@@ -1,15 +1,17 @@
 <template>
   <div>
-    <p><strong>Mesa #{{ mesa.numero }}</strong> (Capacidade: {{ mesa.capacidade }})</p>
+    <p><strong>Mesa #{{ mesa.numero }}</strong> (Capacidade: {{ mesa.capacidade }} Pedidos: {{ mesa.pedidos }})</p>
     <p>Status: {{ mesa.status }}</p>
 
     <div v-if="mesa.status === 'ocupada'">
     </div>
-
+    
     <button @click="toggleMesa">
       {{ mesa.status === 'livre' ? 'Ocupar' : 'Liberar' }}
     </button>
-    <button @click="$emit('remover')">Remover Mesa</button>
+    <div v-if="mesa.status === 'livre'">
+      <button @click="$emit('remover')">Remover Mesa</button>
+    </div>
   </div>
 </template>
 
@@ -20,7 +22,7 @@ export default {
   methods: {
     toggleMesa() {
       if (this.mesa.status === 'livre') {
-        const livreStatus = prompt('oiii')
+        this.mesa.status = 'ocupada';
         // const nomeGarcom = prompt('Nome do garçom:');
         // if (nomeGarcom) this.mesa.ocuparMesa(nomeGarcom);
       } else {

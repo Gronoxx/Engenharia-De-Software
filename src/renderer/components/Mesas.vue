@@ -1,29 +1,23 @@
 <template>
-  <div class="menu-layout">
       <div class="input-group">
         <button @click="adicionarMesa">Adicionar mesa</button>
       </div>
 
       <h2>Mesas Ocupadas</h2>
       <div class="grid">
-        <div class="card">
-          <div v-if="mesasOcupadas.length === 0">Nenhuma mesa ocupada.</div>
-          <div v-for="mesa in mesasOcupadas" :key="mesa.id" class="mb-3 border p-2 rounded">
-            <MesaCard :mesa="mesa" @remover="removerMesa(mesa.id)" />
+          <div v-if="mesasOcupadas.length === 0" class="card">Nenhuma mesa ocupada.</div>
+          <div v-for="mesa in mesasOcupadas" :key="mesa.id" class="card mb-3 border p-2 rounded">
+            <MesaCard :mesa="mesa"/>
           </div>
-        </div>
-      </div>
+          </div>
 
       <h2 class="mt-6">Mesas Livres</h2>
         <div class="grid">
-        <div class="card">
           <div v-if="mesasLivres.length === 0">Nenhuma mesa livre.</div>
-          <div v-for="mesa in mesasLivres" :key="mesa.id" class="mb-3 border p-2 rounded">
+          <div v-for="mesa in mesasLivres" :key="mesa.id" class="card mb-3 border p-2 rounded">
             <MesaCard :mesa="mesa" @remover="removerMesa(mesa.id)" />
           </div>
         </div>
-    </div>
-  </div>
 </template>
 
 <script>
@@ -31,7 +25,7 @@ import api from '@/services/api';
 import Mesa from '@/import/mesa';
 import MesaCard from '@/renderer/components/MesaCard.vue'; 
 
-// adicionar mesas; ver cada mesa como um quadradinho, com o numero dela e nome do garçom associado, e pedidos junto
+// adicionar mesas; ver cada mesa como um quadradinho, com o numero dela , e pedidos junto
 // quando clica na mesa da pra ver a hora de inicio, pedidos, opcao de limpar (resetar) ela ?
 
 export default{
@@ -71,7 +65,7 @@ export default{
         mesa.valorTotal = m.valorTotal;
         return mesa;
         });
-        
+
         this.garcons = garconsRes.data;
       } catch (error) {
         console.error('Erro ao carregar dados:', error);
@@ -87,6 +81,9 @@ export default{
     },
     removerMesa(id){
       this.mesas = this.mesas.filter(m=> m.id !== id);
+    },
+    ocuparMesa(){
+
     }
   }
 }
@@ -113,7 +110,12 @@ export default{
   border-radius: 12px;
   overflow: hidden;
   cursor: pointer;
-  transition: 0.3s;
+  transition: transform 0.3s ease;
+  height: 200px; /* ✅ Fixed height */
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .card:hover {
@@ -131,5 +133,18 @@ export default{
   box-sizing: border-box;
 }
 
+.card-content {
+  padding: 10px;
+}
+
+.card-content h3 {
+  margin: 0 0 5px;
+  font-size: 1.1em;
+}
+
+.card-content p {
+  font-size: 0.9em;
+  color: #666;
+}
 
 </style>
