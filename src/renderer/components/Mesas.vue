@@ -1,16 +1,11 @@
 <template>
-      <div class="input-group">
-        <button @click="adicionarMesa">Adicionar Mesa</button>
-        <button :disabled="mesasOcupadas.length === 0" @click="liberarTodasMesas">Liberar Todas As Mesas</button>
-      </div>
-
       <h2>Mesas Ocupadas</h2>
       <div class="menu-layout">
         <div class="produtos">
       <div class="grid">
           <div v-if="mesasOcupadas.length === 0">Nenhuma mesa ocupada.</div>
           <div v-for="mesa in mesasOcupadas" :key="mesa.id" class="card">
-            <MesaCard :mesa="mesa"/>
+            <MesaCard :mesa="mesa" :pedidos="pedidos"/>
           </div>
           </div>
         </div>
@@ -22,17 +17,22 @@
         <div class="grid">
           <div v-if="mesasLivres.length === 0">Nenhuma mesa livre.</div>
           <div v-for="mesa in mesasLivres" :key="mesa.id" class="card mb-3 border p-2 rounded">
-            <MesaCard :mesa="mesa" @remover="removerMesa(mesa.id)" />
+            <MesaCard :mesa="mesa" :pedidos="pedidos" @remover="removerMesa(mesa.id)" />
           </div>
         </div>
       </div>
     </div>
+
+    <div class="input-group">
+        <button @click="adicionarMesa">Adicionar Mesa</button>
+        <button :disabled="mesasOcupadas.length === 0" @click="liberarTodasMesas">Liberar Todas As Mesas</button>
+      </div>
 </template>
 
 <script>
 import api from '@/services/api';
 import Mesa from '@/import/mesa';
-import MesaCard from '@/renderer/components/MesaCard.vue'; 
+import MesaCard from '@/renderer/components/MesaCard.vue';
 
 // adicionar mesas; ver cada mesa como um quadradinho, com o numero dela, e pedidos junto
 // quando clica na mesa da pra ver a hora de inicio, pedidos, opcao de liberar ela
@@ -61,41 +61,51 @@ export default{
       return this.mesas.filter(m => m.status === 'livre');
     }
   },
-  methods:{
-    async carregarDados() {
-      try {
-        const [mesasRes, garconsRes, pedidosRes] = await Promise.all([
-          api.getMesas(),
-          api.getGarcons(),
-          api.getPedidos()
-        ]);
+  methods:{async carregarDados() {
+  try {
+    const [produtosRes, mesasRes, garconsRes] = await Promise.all([
+      api.getProdutos(),
+      api.getMesas(),
+      api.getGarcons()
+    ]);
 
-        this.mesas = mesasRes.data.map(m => {
-        const mesa = new Mesa(m.numero, m.capacidade);
-        mesa.id = m.id;
-        mesa.status = m.status;
-        mesa.pedidos = m.pedidos;
-        mesa.valorTotal = m.valorTotal;
-        return mesa;
-        });
+    this.produtos = produtosRes.data;
+    this.mesas = mesasRes.data;
+    this.garcons = garconsRes.data.filter(garcom => garcom.ativo);
+    this.status = 'livre';
+    this.valorTotal = 0;
 
-        this.garcons = garconsRes.data;
-      } catch (error) {
-        console.error('Erro ao carregar dados:', error);
-        alert('Erro ao carregar dados do sistema!');
-      }
-    },
+
+  } catch (error) {
+    console.error('Erro ao carregar dados:', error);
+    alert('Erro ao carregar dados do sistema!');
+  }
+},
     adicionarMesa(){
       const numero = this.mesas.length + 1;
-      const novaMesa= new Mesa(numero, );
-
+      const novaMesa= new Mesa(numero, 4);
+      novaMesa.garcom = '';
       this.mesas.push(novaMesa);
     },
     removerMesa(id){
       this.mesas = this.mesas.filter(m=> m.id !== id);
     },
     ocuparMesa(){
-
+      const novoPedidoID = this.pedidos.length +1;
+      const novoPedido = new Pedido(
+        novoPedidoID,
+        [],
+      )
+    },
+    getGarcomMesa(id){
+      const pedido = this.pedidos.find(p => p.mesaId === mesaId && p.status === 'pendente');
+      return pedido?.garcomId || null;
+    },  
+    liberarMesa(){
+      this.status = 'livre';
+      numero = numero-1;
+      this.pedidos = [];
+      this.valorTotal = 0;  
     },
     liberarTodasMesas(){
       this.mesas.forEach(mesa=>{
@@ -125,24 +135,31 @@ export default{
   gap: 20px;
 }
 
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+
 .produtos {
   flex: 1;
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 20px;
 }
 
 .card {
   background: #fff;
   border: 1px solid #ccc;
-  border-radius: 12px;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   overflow: hidden;
   cursor: pointer;
   transition: transform 0.3s ease;
-  height: 200px; /* ✅ Fixed height */
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -156,9 +173,9 @@ export default{
 
 .input-group{
   display: flex;
-  gap: 10px; /* space between buttons */
-  justify-content: center; /* optional: center horizontally */
-  margin-bottom: 20px; /* optional spacing from below */
+  gap: 10px; 
+  justify-content: center; 
+  margin-bottom: 10px;
 }
 
 .input-group button {
