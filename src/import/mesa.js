@@ -30,7 +30,7 @@ export default class Mesa {
   }
 
   listarPedidos() {
-    return this.pedidos;
+    return this.pedidos.find(p => p.mesaId === this.mesaId);
   }
 
   toJSON(){

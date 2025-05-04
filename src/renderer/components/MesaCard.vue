@@ -1,17 +1,19 @@
 <template>
   <div>
-    <p><strong>Mesa #{{ mesa.numero }}</strong> (Capacidade: {{ mesa.capacidade }} Pedidos: {{ mesa.pedidos }})</p>
-    <p>Status: {{ mesa.status }}</p>
+    <h3>Mesa #{{ mesa.numero }}</h3>
 
-    <div v-if="mesa.status === 'ocupada'">
-    </div>
-    
+    <p>Status: {{ mesa.status }}</p>
+    <p>Capacidade: {{ mesa.capacidade }}</p>
+    <p>Pedidos: {{ mesa.getPedido }}</p>
+
+    <div class="input-group" >
     <button @click="toggleMesa">
       {{ mesa.status === 'livre' ? 'Ocupar' : 'Liberar' }}
     </button>
     <div v-if="mesa.status === 'livre'">
       <button @click="$emit('remover')">Remover Mesa</button>
     </div>
+  </div>
   </div>
 </template>
 
@@ -23,24 +25,54 @@ export default {
     toggleMesa() {
       if (this.mesa.status === 'livre') {
         this.mesa.status = 'ocupada';
-        // const nomeGarcom = prompt('Nome do garçom:');
-        // if (nomeGarcom) this.mesa.ocuparMesa(nomeGarcom);
+        this.mesa.adicionarPedido();
       } else {
         this.mesa.liberarMesa();
       }
+    },
+    adicionarPedido(pedido) {
+      this.mesa.adicionarPedido(pedido);
+    },
+    getPedido(id){
+
     }
-    // adicionarPedido() {
-    //   const pedido = {
-    //     itens: [
-    //       { nome: 'Hambúrguer', preco: 25 },
-    //       { nome: 'Refrigerante', preco: 8 }
-    //     ],
-    //     calcularTotal() {
-    //       return this.itens.reduce((t, item) => t + item.preco, 0);
-    //     }
-    //   };
-    //   this.mesa.adicionarPedido(pedido);
-    // }
   }
 };
 </script>
+
+<style scoped>
+
+.input-group{
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.input-group button {
+  padding: 8px 12px;
+  border: none;
+  background: #4CAF50;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.input-group button:disabled{
+  background: #d3d3d3; /* Grey background */
+  color: #a0a0a0; /* Light grey text */
+  cursor: not-allowed;
+}
+
+.card-content {
+  padding: 10px;
+}
+
+.greyed-out {
+  background-color: #d3d3d3;
+  color: #a0a0a0;
+  cursor: not-allowed;
+}
+
+</style>

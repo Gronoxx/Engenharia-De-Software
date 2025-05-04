@@ -8,6 +8,7 @@
           <li><router-link to="/pedidos">Pedidos</router-link></li>
           <li><router-link to="/estoque">Estoque</router-link></li>
           <li><router-link to="/mesas">Mesas</router-link></li>
+          <li><router-link to="/garcons">Garçons</router-link></li>
         </ul>
       </nav>
     </div>

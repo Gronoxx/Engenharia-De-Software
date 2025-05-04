@@ -1,23 +1,32 @@
 <template>
       <div class="input-group">
-        <button @click="adicionarMesa">Adicionar mesa</button>
+        <button @click="adicionarMesa">Adicionar Mesa</button>
+        <button :disabled="mesasOcupadas.length === 0" @click="liberarTodasMesas">Liberar Todas As Mesas</button>
       </div>
 
       <h2>Mesas Ocupadas</h2>
+      <div class="menu-layout">
+        <div class="produtos">
       <div class="grid">
-          <div v-if="mesasOcupadas.length === 0" class="card">Nenhuma mesa ocupada.</div>
-          <div v-for="mesa in mesasOcupadas" :key="mesa.id" class="card mb-3 border p-2 rounded">
+          <div v-if="mesasOcupadas.length === 0">Nenhuma mesa ocupada.</div>
+          <div v-for="mesa in mesasOcupadas" :key="mesa.id" class="card">
             <MesaCard :mesa="mesa"/>
           </div>
           </div>
+        </div>
+      </div>
 
       <h2 class="mt-6">Mesas Livres</h2>
+      <div class="menu-layout">
+        <div class="produtos">
         <div class="grid">
           <div v-if="mesasLivres.length === 0">Nenhuma mesa livre.</div>
           <div v-for="mesa in mesasLivres" :key="mesa.id" class="card mb-3 border p-2 rounded">
             <MesaCard :mesa="mesa" @remover="removerMesa(mesa.id)" />
           </div>
         </div>
+      </div>
+    </div>
 </template>
 
 <script>
@@ -25,8 +34,8 @@ import api from '@/services/api';
 import Mesa from '@/import/mesa';
 import MesaCard from '@/renderer/components/MesaCard.vue'; 
 
-// adicionar mesas; ver cada mesa como um quadradinho, com o numero dela , e pedidos junto
-// quando clica na mesa da pra ver a hora de inicio, pedidos, opcao de limpar (resetar) ela ?
+// adicionar mesas; ver cada mesa como um quadradinho, com o numero dela, e pedidos junto
+// quando clica na mesa da pra ver a hora de inicio, pedidos, opcao de liberar ela
 
 export default{
   name: 'Mesas',
@@ -34,7 +43,10 @@ export default{
   data(){
     return {
       mesas: [],
-      garcons: []
+      garcons: [],
+      pedidos: [],
+      mesaSelecionada: null,
+      cardAberto: false
     };
   },
   async created(){
@@ -52,9 +64,10 @@ export default{
   methods:{
     async carregarDados() {
       try {
-        const [mesasRes, garconsRes] = await Promise.all([
+        const [mesasRes, garconsRes, pedidosRes] = await Promise.all([
           api.getMesas(),
           api.getGarcons(),
+          api.getPedidos()
         ]);
 
         this.mesas = mesasRes.data.map(m => {
@@ -72,7 +85,6 @@ export default{
         alert('Erro ao carregar dados do sistema!');
       }
     },
-
     adicionarMesa(){
       const numero = this.mesas.length + 1;
       const novaMesa= new Mesa(numero, );
@@ -84,6 +96,21 @@ export default{
     },
     ocuparMesa(){
 
+    },
+    liberarTodasMesas(){
+      this.mesas.forEach(mesa=>{
+        mesa.status = 'livre';
+        mesa.pedidos = [];
+        mesa.valorTotal = 0;  
+      })
+    },
+    abrirCard(mesa){
+      this.mesaSelecionada = mesa;
+      this.cardAberto = true;
+    },
+    fecharCard(mesa){
+      this.cardAberto = false;
+      this.mesaSelecionada = null;
     }
   }
 }
@@ -98,9 +125,13 @@ export default{
   gap: 20px;
 }
 
+.produtos {
+  flex: 1;
+}
+
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(6, 1fr);
   gap: 20px;
 }
 
@@ -123,28 +154,37 @@ export default{
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
+.input-group{
+  display: flex;
+  gap: 10px; /* space between buttons */
+  justify-content: center; /* optional: center horizontally */
+  margin-bottom: 20px; /* optional spacing from below */
+}
+
 .input-group button {
   padding: 8px 12px;
   border: none;
   background: #4CAF50;
   color: white;
-  border-radius: 0 5px 5px 0;
+  border-radius: 5px;
   cursor: pointer;
   box-sizing: border-box;
+}
+
+.input-group button:disabled{
+  background: #d3d3d3; /* Grey background */
+  color: #a0a0a0; /* Light grey text */
+  cursor: not-allowed;
 }
 
 .card-content {
   padding: 10px;
 }
 
-.card-content h3 {
-  margin: 0 0 5px;
-  font-size: 1.1em;
-}
-
-.card-content p {
-  font-size: 0.9em;
-  color: #666;
+.greyed-out {
+  background-color: #d3d3d3;
+  color: #a0a0a0;
+  cursor: not-allowed;
 }
 
 </style>
