@@ -117,6 +117,7 @@ export default {
         ]);
 
         this.produtos = produtosRes.data;
+        this.mesas = mesasRes.data;
         this.garcons = garconsRes.data.filter(garcom => garcom.ativo);
       } catch (error) {
         console.error('Erro ao carregar dados:', error);

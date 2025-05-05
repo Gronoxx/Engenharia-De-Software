@@ -32,7 +32,22 @@
     {
       "id": 3,
       "numero": "A3",
-      "status": "ocupada",
+      "status": "livre",
+      "capacidade": 4,
+      "pedidosAtivos": [
+        1,
+        1,
+        1,
+        2,
+        1,
+        3
+      ],
+      "valorTotalGasto": 0
+    },
+    {
+      "id": 4,
+      "numero": "A4",
+      "status": "livre",
       "capacidade": 4,
       "pedidosAtivos": [
         1,
@@ -105,6 +120,36 @@
       "dataAbertura": "2025-05-04T07:56:04.660Z",
       "valorTotal": 28.9,
       "id": 3
+    },
+    {
+      "status": "em_preparo",
+      "itens": [
+        {
+          "produtoId": "2",
+          "quantidade": 1,
+          "observacoes": ""
+        }
+      ],
+      "mesaId": 1,
+      "garcomId": "1",
+      "dataAbertura": "2025-05-05T19:10:51.241Z",
+      "valorTotal": 28.9,
+      "id": 4
+    },
+    {
+      "status": "em_preparo",
+      "itens": [
+        {
+          "produtoId": "2",
+          "quantidade": 1,
+          "observacoes": ""
+        }
+      ],
+      "mesaId": 1,
+      "garcomId": "1",
+      "dataAbertura": "2025-05-05T19:11:23.955Z",
+      "valorTotal": 28.9,
+      "id": 5
     }
   ],
   "produtos": [
