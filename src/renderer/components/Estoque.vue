@@ -249,9 +249,10 @@ h2 {
   border-radius: 10px;
   padding: 15px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: 0px;
+  /*gap: 0px;*/
   box-sizing: border-box; /* Certifique-se de que o padding não cause overflow */
 }
 
@@ -261,12 +262,15 @@ h2 {
 
 .input-group {
   display: flex;
+  justify-content: left; 
+  max-width: 100%;
   margin-bottom: 10px;
 }
 
 .input-group input,
 .input-group select {
   flex: 1;
+  min-width: 0;
   padding: 8px;
   border: 1px solid #ddd;
   border-radius: 5px 0 0 5px;
@@ -281,6 +285,7 @@ h2 {
   border-radius: 0 5px 5px 0;
   cursor: pointer;
   box-sizing: border-box;
+  white-space: nowrap;
 }
 
 .input-group button:hover {
