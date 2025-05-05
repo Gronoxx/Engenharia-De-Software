@@ -82,37 +82,47 @@ export default{
   }
 },
     adicionarMesa(){
+      /*
       const numero = this.mesas.length + 1;
       const novaMesa= new Mesa(numero, 4);
       novaMesa.garcom = '';
       this.mesas.push(novaMesa);
+      */
     },
     removerMesa(id){
+      /*
       this.mesas = this.mesas.filter(m=> m.id !== id);
+      */
     },
     ocuparMesa(){
+      /*
       const novoPedidoID = this.pedidos.length +1;
       const novoPedido = new Pedido(
         novoPedidoID,
         [],
       )
+      */
     },
     getGarcomMesa(id){
       const pedido = this.pedidos.find(p => p.mesaId === mesaId && p.status === 'pendente');
       return pedido?.garcomId || null;
     },  
     liberarMesa(){
+      /*
       this.status = 'livre';
       numero = numero-1;
       this.pedidos = [];
       this.valorTotal = 0;  
+      */
     },
     liberarTodasMesas(){
+      /*
       this.mesas.forEach(mesa=>{
         mesa.status = 'livre';
         mesa.pedidos = [];
         mesa.valorTotal = 0;  
       })
+        */
     },
     abrirCard(mesa){
       this.mesaSelecionada = mesa;

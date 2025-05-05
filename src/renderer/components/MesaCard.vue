@@ -51,11 +51,13 @@ export default {
   },
   methods: {
     toggleMesa() {
+      /*
       if (this.mesa.status === 'livre') {
         this.mesa.status = 'ocupada';
       } else {
         this.mesa.status='livre';
       }
+      */
     },
     getPedido(id){
 
